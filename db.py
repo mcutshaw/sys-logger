@@ -26,6 +26,7 @@ class logger_db:
             self.execute('''CREATE TABLE logging
                             (type VARCHAR(100) NOT NULL,
                             node_name VARCHAR(100) NOT NULL,
+                            feature_name VARCHAR(100) NOT NULL,
                             date DATETIME NOT NULL,
                             core INT,
                             value DECIMAL(32,2) NOT NULL);''')
@@ -55,8 +56,17 @@ class logger_db:
         self.close()
         return text_return
     
-    def send(self, name, _type, num, date, core=None):
+    def send(self, node_name, feature_name, _type, num, date, core=None):
         if core is not None:
-            self.execute("INSERT INTO logging VALUES('{0}','{1}','{2}',{3},{4})".format(_type, name, date,core, num) )
+            #print("INSERT INTO logging VALUES('{0}','{1}','{2}','{3}',{4},{5})".format(_type, feature_name, node_name, date,core, num))
+            self.execute("INSERT INTO logging VALUES('{0}','{1}','{2}','{3}',{4},{5})".format(_type, feature_name, node_name, date,core, num) )
         else:
-            self.execute("INSERT INTO logging VALUES('{0}','{1}','{2}','-1',{3})".format(_type, name, date, num) )
+            #print("INSERT INTO logging VALUES('{0}','{1}','{2}','{3}','-1',{4})".format(_type, feature_name, node_name, date, num))
+            self.execute("INSERT INTO logging VALUES('{0}','{1}','{2}','{3}','-1',{4})".format(_type, feature_name, node_name, date, num) )
+
+    def get_data(self, _type):
+        print("SELECT value FROM logging WHERE type='{0}'".format(_type))
+        results = self.execute("SELECT value,date FROM logging WHERE type='{0}'".format(_type) )
+        nums = [item[0] for item in results]
+        dates = [item[1] for item in results]
+        return (nums,dates)
