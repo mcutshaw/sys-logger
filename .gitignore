@@ -1,0 +1,4 @@
+*.conf
+!example.conf
+
+__pycache__
