@@ -8,6 +8,7 @@ class sys_logger:
 
     def __init__(self, config):
         self.config = config
+        self.nodename = config['main']['Node_name']
         self._parse_conf(config)
         self._attach_loggers()
         self.start()
@@ -18,7 +19,6 @@ class sys_logger:
         p = Pool(len(self.list))
         p.map(self._spawn_thread, self.list)
 
-
     def _spawn_thread(self,arg_list):
         db = logger_db(self.config)
         print(arg_list)
@@ -27,9 +27,9 @@ class sys_logger:
                 date = datetime.now()
                 if type(result) == list:
                     for index, item in enumerate(result):
-                        db.send(arg_list['feature_name'], arg_list['feature_type'], item, date, core=index)
+                        db.send(arg_list['feature_name'],self.nodename, arg_list['feature_type'], item, date, core=index)
                 else:    
-                    db.send(arg_list['feature_name'], arg_list['feature_type'], result, date, core=None)
+                    db.send(arg_list['feature_name'],self.nodename, arg_list['feature_type'], result, date, core=None)
 
 
     def _attach_loggers(self):
